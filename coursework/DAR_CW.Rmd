@@ -93,6 +93,7 @@ predictionInterval <- predict(
 print(predictionInterval)
 
 ```
+
 For 3.0 cylinders, the predicted acceleration is 17.55906, the confidence interval is 17.00962 - 18.10849, and the prediction interval is 11.361636 - 23.75648. The confidence and prediction intervals for the rest of the cylinders are shown above, with the row numbers corresponding to the row numbers in uniqueCylinders representing the number of cylinders.
 
 <!-- -->
@@ -173,6 +174,7 @@ d)  Make predictions for 2 testing observations by using a naïve Bayes classifi
 a)  Download the full wine quality training and testing datasets from Moodle, and use the training dataset to find out the optimal value of hyperparameter C for a linear kernel-based svm. Define the value of the random seed equals 1 and cost = c(0.01, 1, 100). \hfill ($5\%$)
 
 ```{r}
+# Prepare data.
 dataTrain = read.table(
   'WineQuality_training.txt',
   header=TRUE,
@@ -188,35 +190,24 @@ dataTest = read.table(
 )
 dataTest$quality <- as.factor(dataTest$quality)
 
+# Comparing different costs with 10-fold cross-validation.
 set.seed(1)
-tunedSvm <- tune(
+tunedSvmLinear <- tune(
   svm,
   quality ~ .,
   data=dataTrain,
   kernel='linear',
   ranges=list(cost=c(0.01, 1, 100))
 )
-print(summary(tunedSvm))
+print(summary(tunedSvmLinear))
 
 ```
-The most optimal value of the cost hyperparameter is 1 as it produces the lowest error. This is for tuning with scale set to TRUE. Tuning the SVM with scale set to FALSE takes too much time, so it is not performed.
+
+The most optimal value of the cost hyperparameter is 1 as it produced the lowest error of 0.238. This is for tuning with scale set to TRUE. Tuning the SVM with scale set to FALSE takes too much time, so it is not performed.
 
 b)  Train a svm classifier by using the linear kernel and the corresponding optimal value of hyperparameter C, then make predictions on the testing dataset, report the classification accuracy. \hfill ($10\%$)
 
 ```{r}
-# Without scaling.
-modelSvmLinearNoScale <- svm(
-  quality ~ .,
-  data=dataTrain,
-  kernel='linear',
-  cost=1,
-  scale=FALSE
-)
-# print(summary(modelSvmLinear))
-# plot(modelSvmLinear, dataTrain, volatile.acidity ~ residual.sugar)
-pred <- predict(modelSvmLinear, newdata=dataTest[, -12])
-mean(pred == dataTest[, 12])
-
 # With scaling.
 modelSvmLinear <- svm(
   quality ~ .,
@@ -225,12 +216,23 @@ modelSvmLinear <- svm(
   cost=1,
   scale=TRUE
 )
-# print(summary(modelSvmLinear))
-# plot(modelSvmLinear, dataTrain, volatile.acidity ~ residual.sugar)
+pred <- predict(modelSvmLinear, newdata=dataTest[, -12])
+mean(pred == dataTest[, 12])
+
+# Without scaling.
+modelSvmLinear <- svm(
+  quality ~ .,
+  data=dataTrain,
+  kernel='linear',
+  cost=1,
+  scale=FALSE
+)
 pred <- predict(modelSvmLinear, newdata=dataTest[, -12])
 mean(pred == dataTest[, 12])
 
 ```
+
+The optimal value of the cost hyperparameter is set to 1. The classification accuracy is 68.25% when trained with scaling, and 69.75% when trained without scaling. Training without scaling resulted in a slightly higher testing accuracy, although it took a noticeably longer time, and there could be a better cost hyperparameter as tuning was only done with scaling.
 
 c)  Use the training dataset to find out the optimal values of hyperparameters C and for an RBF kernel-based svm. Define the value of the random seed equals 1, cost = c(0.01, 1, 100) and gamma=c(0.01, 1, 100). \hfill ($5\%$)
 
