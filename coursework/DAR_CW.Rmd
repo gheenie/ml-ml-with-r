@@ -326,7 +326,49 @@ From top to bottom, the code output shows the conditional probability tables for
 
 d)  Make predictions for 2 testing observations by using a naïve Bayes classifier. \hfill ($5\%$)
 
+For observation 31:
 
+P(Buy Computer=No | Income=Low, Student=True, Credit Rating=Excellent)
+is proportional to P(Income=Low, Student=True, Credit Rating=Excellent, Buy Computer=No)
+= P(Income=Low | Buy Computer=No)
+* P(Student=True | Buy Computer=No)
+* P(Credit Rating=Excellent | Buy Computer=No)
+* P(Buy Computer=No)
+= 0.611 * 0.667 * 0.333 * 0.6
+= 0.0814258926
+
+P(Buy Computer=Yes | Income=Low, Student=True, Credit Rating=Excellent)
+is proportional to P(Income=Low, Student=True, Credit Rating=Excellent, Buy Computer=Yes)
+= P(Income=Low | Buy Computer=Yes)
+* P(Student=True | Buy Computer=Yes)
+* P(Credit Rating=Excellent | Buy Computer=Yes)
+* P(Buy Computer=Yes)
+= 0.583 * 0.5 * 0.583 * 0.4
+= 0.0679778
+
+Hence, the prediction for observation 31 is No, because P(Buy Computer=No | Income=Low, Student=True, Credit Rating=Excellent) is greater than P(Buy Computer=Yes | Income=Low, Student=True, Credit Rating=Excellent).
+
+For observation 32:
+
+P(Buy Computer=No | Income=High, Student=True, Credit Rating=Fair)
+is proportional to P(Income=High, Student=True, Credit Rating=Fair, Buy Computer=No)
+= P(Income=High | Buy Computer=No)
+* P(Student=True | Buy Computer=No)
+* P(Credit Rating=Fair | Buy Computer=No)
+* P(Buy Computer=No)
+= 0.389 * 0.667 * 0.667 * 0.6
+= 0.1038370926
+
+P(Buy Computer=Yes | Income=High, Student=True, Credit Rating=Fair)
+is proportional to P(Income=High, Student=True, Credit Rating=Fair, Buy Computer=Yes)
+= P(Income=High | Buy Computer=Yes)
+* P(Student=True | Buy Computer=Yes)
+* P(Credit Rating=Fair | Buy Computer=Yes)
+* P(Buy Computer=Yes)
+= 0.417 * 0.5 * 0.417 * 0.4
+= 0.0347778
+
+Hence, the prediction for observation 32 is No, because P(Buy Computer=No | Income=High, Student=True, Credit Rating=Fair) is greater than P(Buy Computer=Yes | Income=High, Student=True, Credit Rating=Fair).
 
 #### 4. Predicting wine quality by using support vector machine classification algorithm. \hfill ($40\%$)
 
