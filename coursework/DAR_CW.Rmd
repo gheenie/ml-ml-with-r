@@ -2,9 +2,14 @@
 # renv::install('rmarkdown')
 # renv::install('knitr')
 # renv::install('ISLR')
+# renv::install('aod')
+# renv::install('ROCR')
 library(rmarkdown)
 library(knitr)
 library(ISLR)
+library(aod)
+library(ROCR)
+library(e1071)
 
 ```
 
@@ -289,6 +294,64 @@ The optimal value of the cost and gamma hyperparameters are set to 100 and 1 res
 e)  Train a logistic regression model. Then use the testing dataset to conduct an ROC curve analysis to compare the predictive performance of the trained logistic regression model and those two svm classifiers trained by using linear and RBF kernels respectively. \hfill ($10\%$)
 
 ```{r}
+modelLogisticReg <- glm(quality ~ ., data=dataTrain, family='binomial')
+probabilities <- predict(modelLogisticReg, newdata=dataTest, type='response')
+predictions <- prediction(probabilities, dataTest$quality)
+tprfpr <- performance(predictions, measure='tpr', x.measure='fpr')
+plot(tprfpr)
+# Select the 'top left' corner of the plot, which is row 215 of tprfpr with
+# threshold=0.4332222525, x=0.302816901, and y=0.763565891
+classPredictions <- rep('Good', 400)
+classPredictions[probabilities < 0.4332222525] <- 'Bad'
+print(mean(classPredictions == dataTest$quality))
 
 ```
 
+The classification accuracy of the logistic regression model is 73.75%. This is the highest, followed by the linear kernel SVM classifier (68.25%/69.75%), then the RBF kernel SVM classifier (64%). However, many factors can affect the evaluated performance. A more extreme threshold selected from the ROC curve may produce a better classification accuracy for this specific test dataset but may not generalise better to new test datasets. The three models were trained with all the possible predictors, but changing the selected predictors may result in better performances for each model. For the logistic regression model, dropping predictors whose p-values do not meet our desired thresholds may improve performance, as well as looking at pairwise correlations between the predictors.
+
+```{r}
+summary(modelLogisticReg)
+
+# Remove predictors with p-values above 0.05.
+modelLogisticReg <- glm(
+  quality ~ .-citric.acid-chlorides-free.sulfur.dioxide-alcohol,
+  data=dataTrain,
+  family='binomial')
+probabilities <- predict(modelLogisticReg, newdata=dataTest, type='response')
+predictions <- prediction(probabilities, dataTest$quality)
+tprfpr <- performance(predictions, measure='tpr', x.measure='fpr')
+plot(tprfpr)
+# Select the 'top left' corner of the plot, which is row 214 of tprfpr with
+# threshold=0.4376569330, x=0.309859155, and y=0.763565891
+classPredictions <- rep('Good', 400)
+classPredictions[probabilities < 0.4376569330] <- 'Bad'
+print(mean(classPredictions == dataTest$quality))
+
+set.seed(1)
+tunedSvmLinear <- tune(
+  svm,
+  quality ~ .-citric.acid-chlorides-free.sulfur.dioxide-alcohol,
+  data=dataTrain,
+  kernel='linear',
+  ranges=list(cost=c(0.01, 1, 100))
+)
+pred <- predict(tunedSvmLinear$best.model, newdata=dataTest[, -12])
+mean(pred == dataTest[, 12])
+
+set.seed(1)
+tunedSvmRadial <- tune(
+  svm,
+  quality ~ .-citric.acid-chlorides-free.sulfur.dioxide-alcohol,
+  data=dataTrain,
+  kernel='radial',
+  ranges=list(
+    cost=c(0.01, 1, 100),
+    gamma=c(0.01, 1, 100)
+  )
+)
+pred <- predict(tunedSvmRadial$best.model, newdata=dataTest[, -12])
+mean(pred == dataTest[, 12])
+
+```
+
+After removing some predictors for the logistic regression model, the classification accuracy was slightly improved, and another benefit is that the model is more explainable. The same result was observed for the linear and RBF kernel SVM classifiers with scaling, with a bigger performance improvement for the RBF kernel SVM classifier. 
