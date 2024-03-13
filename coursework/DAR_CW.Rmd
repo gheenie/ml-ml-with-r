@@ -236,6 +236,25 @@ The optimal value of the cost hyperparameter is set to 1. The classification acc
 
 c)  Use the training dataset to find out the optimal values of hyperparameters C and for an RBF kernel-based svm. Define the value of the random seed equals 1, cost = c(0.01, 1, 100) and gamma=c(0.01, 1, 100). \hfill ($5\%$)
 
+```{r}
+# Compare different costs and gammas with 10-fold cross-validation.
+set.seed(1)
+tunedSvmRadial <- tune(
+  svm,
+  quality ~ .,
+  data=dataTrain,
+  kernel='radial',
+  ranges=list(
+    cost=c(0.01, 1, 100),
+    gamma=c(0.01, 1, 100)
+  )
+)
+print(summary(tunedSvmRadial))
+
+```
+
+The most optimal values of the cost and gamma hyperparameters are 100 and 1 respectively as it produced the lowest error of 0.1556667. This is for tuning with scale set to TRUE. Tuning the SVM with scale set to FALSE takes too much time, so it is not performed.
+
 d)  Train a svm classifier by using the RBF kernel and the corresponding optimal values of hyperparameters C and gamma, then make predictions on the testing dataset, report the classification accuracy. \hfill ($10\%$)
 
 e)  Train a logistic regression model. Then use the testing dataset to conduct an ROC curve analysis to compare the predictive performance of the trained logistic regression model and those two svm classifiers trained by using linear and RBF kernels respectively. \hfill ($10\%$)
