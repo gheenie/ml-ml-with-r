@@ -1,8 +1,11 @@
 ```{r}
-renv::install('rmarkdown')
-renv::install('knitr')
+# renv::install('rmarkdown')
+# renv::install('knitr')
+# renv::install('ISLR')
 library(rmarkdown)
 library(knitr)
+library(ISLR)
+
 ```
 
 ---
@@ -39,13 +42,12 @@ This question involves the `Auto` dataset included in the “ISLR” package.
 (a) Use the `lm()` function to perform a simple linear regression with `acceleration` as the response and `cylinders` as the predictor. Use the `summary()` function to print the results. Comment on the output. For example:
 
 ```{r}
-renv::install('ISLR')
-library(ISLR)
-
 View(Auto)
 
+# Model the least squares line.
 modelLinearReg <- lm(acceleration ~ cylinders, Auto)
 print(summary(modelLinearReg))
+
 ```
 
 <!-- -->
@@ -60,7 +62,39 @@ The relationship is not very strong, because although the adjusted R-squared is 
 
 iii. Is the relationship between the predictor and the response positive or negative? ($3\%$)
 
+The relationship is negative because the coefficient of cylinders is negative.
+
 iv. What is the predicted `acceleration` associated with an `cylinders` of 3.0? What are the associated 99% confidence and prediction intervals? ($3\%$)
+
+```{r}
+uniqueCylinders = sort(unique(Auto[, 'cylinders']), decreasing=FALSE)
+print(uniqueCylinders)
+
+# Predict on unique cylinder numbers.
+prediction <- predict(
+  modelLinearReg,
+  newdata=data.frame(cylinders=uniqueCylinders)
+)
+print(prediction)
+
+confidenceInterval <- predict(
+  modelLinearReg,
+  newdata=data.frame(cylinders=uniqueCylinders),
+  interval='confidence',
+  level=.99
+)
+print(confidenceInterval)
+
+predictionInterval <- predict(
+  modelLinearReg,
+  newdata=data.frame(cylinders=uniqueCylinders),
+  interval='prediction',
+  level=.99
+)
+print(predictionInterval)
+
+```
+The predicted acceleration with cylinder 3.0 is 17.55906. The associated confidence intervals, followed by the prediction intervals, are shown for the cylinders in the order shown.
 
 <!-- -->
 
@@ -80,6 +114,51 @@ abline(modelLinearReg)
 
 (c) Plot the 99% confidence interval and prediction interval in the same plot as (b) using different colours and legends. ($5\%$)
 
+```{r}
+plot(
+  acceleration ~ cylinders,
+  Auto,
+  xlab='acceleration',
+  ylab='damage',
+  main='Plot of damage against distance',
+  ylim=c(7, 25)
+)
+abline(modelLinearReg)
+
+lines(
+  confidenceInterval[, 'lwr'] ~ uniqueCylinders,
+  col='red',
+  pch='+',
+  type='b'
+)
+lines(
+  confidenceInterval[, 'upr'] ~ uniqueCylinders,
+  col='red',
+  pch='+',
+  type='b'
+)
+lines(
+  predictionInterval[, 'lwr'] ~ uniqueCylinders,
+  col='blue',
+  pch='*',
+  type='b'
+)
+lines(
+  predictionInterval[, 'upr'] ~ uniqueCylinders,
+  col='blue',
+  pch='*',
+  type='b'
+)
+legend(
+  'topright',
+  pch=c('+', '*'),
+  col=c('red', 'blue'),
+  legend=c('confidence', 'prediction')
+)
+
+```
+
+
 #### 3. Bayesian networks and naïve Bayes classifiers.\hfill ($30\%$)
 
 a)  Given a training dataset including 30 observations and a Bayesian network indicating the relationships between 3 features (i.e. Income, Student and Credit Rate) and the class attribute (i.e. Buy Computer), please create the conditional probability tables by hand. \hfill ($10\%$)
@@ -94,7 +173,50 @@ d)  Make predictions for 2 testing observations by using a naïve Bayes classifi
 
 a)  Download the full wine quality training and testing datasets from Moodle, and use the training dataset to find out the optimal value of hyperparameter C for a linear kernel-based svm. Define the value of the random seed equals 1 and cost = c(0.01, 1, 100). \hfill ($5\%$)
 
+```{r}
+dataTrain = read.table(
+  'WineQuality_training.txt',
+  header=TRUE,
+  sep=',',
+  dec='.'
+)
+dataTrain$quality <- as.factor(dataTrain$quality)
+dataTest = read.table(
+  'WineQuality_testing.txt',
+  header=TRUE,
+  sep=',',
+  dec='.'
+)
+dataTest$quality <- as.factor(dataTest$quality)
+
+set.seed(1)
+tunedSvm <- tune(
+  svm,
+  quality ~ .,
+  data=dataTrain,
+  kernel='linear',
+  ranges=list(cost=c(0.01, 1, 100))
+)
+print(summary(tunedSvm))
+
+```
+The most optimal value of the cost hyperparameter is 1.
+
 b)  Train a svm classifier by using the linear kernel and the corresponding optimal value of hyperparameter C, then make predictions on the testing dataset, report the classification accuracy. \hfill ($10\%$)
+
+```{r}
+modelSvmLinear <- svm(
+  y ~ .,
+  data=dataTrain,
+  kernel='linear',
+  cost=1,
+  scale=FALSE
+)
+print(summary(modelSvmLinear))
+plot(modelSvmLinear, dataTrain)
+pred <- predict(modelSvmLinear, newdata=xTest)
+mean(pred != yTest)
+```
 
 c)  Use the training dataset to find out the optimal values of hyperparameters C and for an RBF kernel-based svm. Define the value of the random seed equals 1, cost = c(0.01, 1, 100) and gamma=c(0.01, 1, 100). \hfill ($5\%$)
 
