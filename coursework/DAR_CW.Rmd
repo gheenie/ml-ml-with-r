@@ -110,6 +110,7 @@ For 3.0 cylinders, the predicted acceleration is 17.55906, the confidence interv
 (b) Plot the response and the predictor. Use the `abline()` function to display the least squares regression line. ($3\%$)
 
 ```{r}
+# Plot the dataset.
 plot(
   acceleration ~ cylinders,
   Auto,
@@ -117,6 +118,7 @@ plot(
   ylab='damage',
   main='Plot of damage against distance'
 )
+# Then plot the least squares line.
 abline(modelLinearReg)
 
 ```
@@ -124,6 +126,7 @@ abline(modelLinearReg)
 (c) Plot the 99% confidence interval and prediction interval in the same plot as (b) using different colours and legends. ($5\%$)
 
 ```{r}
+# Re-plot the dataset and least squares line.
 plot(
   acceleration ~ cylinders,
   Auto,
@@ -134,6 +137,7 @@ plot(
 )
 abline(modelLinearReg)
 
+# Plot the lines for confidence and prediction intervals.
 lines(
   confidenceInterval[, 'lwr'] ~ uniqueCylinders,
   col='red',
@@ -173,6 +177,7 @@ legend(
 a)  Given a training dataset including 30 observations and a Bayesian network indicating the relationships between 3 features (i.e. Income, Student and Credit Rate) and the class attribute (i.e. Buy Computer), please create the conditional probability tables by hand. \hfill ($10\%$)
 
 ```{r}
+# Inspect data.
 bayesianTrainingData = read.table(
   'question 3.txt',
   header=TRUE,
@@ -321,6 +326,8 @@ From top to bottom, the code output shows the conditional probability tables for
 
 d)  Make predictions for 2 testing observations by using a naïve Bayes classifier. \hfill ($5\%$)
 
+
+
 #### 4. Predicting wine quality by using support vector machine classification algorithm. \hfill ($40\%$)
 
 a)  Download the full wine quality training and testing datasets from Moodle, and use the training dataset to find out the optimal value of hyperparameter C for a linear kernel-based svm. Define the value of the random seed equals 1 and cost = c(0.01, 1, 100). \hfill ($5\%$)
@@ -441,7 +448,9 @@ The optimal value of the cost and gamma hyperparameters are set to 100 and 1 res
 e)  Train a logistic regression model. Then use the testing dataset to conduct an ROC curve analysis to compare the predictive performance of the trained logistic regression model and those two svm classifiers trained by using linear and RBF kernels respectively. \hfill ($10\%$)
 
 ```{r}
+# Model the logistic regression.
 modelLogisticReg <- glm(quality ~ ., data=dataTrain, family='binomial')
+# Obtain predictions in the form of probabilities.
 probabilities <- predict(modelLogisticReg, newdata=dataTest, type='response')
 predictions <- prediction(probabilities, dataTest$quality)
 tprfpr <- performance(predictions, measure='tpr', x.measure='fpr')
@@ -474,6 +483,7 @@ classPredictions <- rep('Good', 400)
 classPredictions[probabilities < 0.4376569330] <- 'Bad'
 print(mean(classPredictions == dataTest$quality))
 
+# Experiment with removing the same predictors as above.
 set.seed(1)
 tunedSvmLinear <- tune(
   svm,
