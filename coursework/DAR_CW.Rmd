@@ -179,6 +179,7 @@ bayesianTrainingData = read.table(
   sep=' '
 )
 
+# Conditional probability table for Credit Rating.
 income = c('low', 'low', 'low', 'low', 'high', 'high', 'high', 'high')
 student = c('false', 'false', 'true', 'true', 'false', 'false', 'true', 'true')
 buyComputer = c('no', 'yes', 'no', 'yes', 'no', 'yes', 'no', 'yes')
@@ -197,6 +198,7 @@ colnames(creditRatingCpt) <- c(
 print.data.frame(creditRatingCpt, row.names=FALSE)
 writeLines('')
 
+# Conditional probability table for Income.
 buyComputer <- c('no', 'yes')
 lowIncome <- c(0.611, 0.583)
 highIncome <- c(0.389, 0.417)
@@ -205,7 +207,7 @@ colnames(incomeCpt) <- c('Buy Computer', 'Income = Low', 'Income = High')
 print.data.frame(incomeCpt, row.names=FALSE)
 writeLines('')
 
-buyComputer <- c('no', 'yes')
+# Conditional probability table for Student.
 falseStudent <- c(0.333, 0.5)
 trueStudent <- c(0.667, 0.5)
 studentCpt <- data.frame(cbind(buyComputer, falseStudent, trueStudent))
@@ -213,6 +215,7 @@ colnames(studentCpt) <- c('Buy Computer', 'Student = False', 'Student = True')
 print.data.frame(studentCpt, row.names=FALSE)
 writeLines('')
 
+# Conditional probability table for Buy Computer.
 noBuyComputer <- c(0.6)
 yesBuyComputer <- c(0.4)
 buyComputerCpt <- data.frame(cbind(noBuyComputer, yesBuyComputer))
@@ -226,7 +229,95 @@ From top to bottom, the code output shows the conditional probability tables for
 
 b)  Make predictions for 2 testing observations by using a Bayesian network classifier. \hfill ($5\%$)
 
+For observation 31:
+
+P(Buy Computer=No | Income=Low, Student=True, Credit Rating=Excellent)
+is proportional to P(Income=Low, Student=True, Credit Rating=Excellent, Buy Computer=No)
+= P(Income=Low | Buy Computer=No)
+* P(Student=True | Buy Computer=No)
+* P(Credit Rating=Excellent | Income=Low, Student=True, Buy Computer=No)
+* P(Buy Computer=No)
+= 0.611 * 0.667 * 0.25 * 0.6
+= 0.06113055
+
+P(Buy Computer=Yes | Income=Low, Student=True, Credit Rating=Excellent)
+is proportional to P(Income=Low, Student=True, Credit Rating=Excellent, Buy Computer=Yes)
+= P(Income=Low | Buy Computer=Yes)
+* P(Student=True | Buy Computer=Yes)
+* P(Credit Rating=Excellent | Income=Low, Student=True, Buy Computer=Yes)
+* P(Buy Computer=Yes)
+= 0.583 * 0.5 * 0.5 * 0.4
+= 0.0583
+
+Hence, the prediction for observation 31 is No, because P(Buy Computer=No | Income=Low, Student=True, Credit Rating=Excellent) is greater than P(Buy Computer=Yes | Income=Low, Student=True, Credit Rating=Excellent).
+
+For observation 32:
+
+P(Buy Computer=No | Income=High, Student=True, Credit Rating=Fair)
+is proportional to P(Income=High, Student=True, Credit Rating=Fair, Buy Computer=No)
+= P(Income=High | Buy Computer=No)
+* P(Student=True | Buy Computer=No)
+* P(Credit Rating=Fair | Income=High, Student=True, Buy Computer=No)
+* P(Buy Computer=No)
+= 0.389 * 0.667 * 0.75 * 0.6
+= 0.11675835
+
+P(Buy Computer=Yes | Income=High, Student=True, Credit Rating=Fair)
+is proportional to P(Income=High, Student=True, Credit Rating=Fair, Buy Computer=Yes)
+= P(Income=High | Buy Computer=Yes)
+* P(Student=True | Buy Computer=Yes)
+* P(Credit Rating=Fair | Income=High, Student=True, Buy Computer=Yes)
+* P(Buy Computer=Yes)
+= 0.417 * 0.5 * 0.5 * 0.4
+= 0.0417
+
+Hence, the prediction for observation 32 is No, because P(Buy Computer=No | Income=High, Student=True, Credit Rating=Fair) is greater than P(Buy Computer=Yes | Income=High, Student=True, Credit Rating=Fair).
+
 c)  Based on the conditional independence assumption between features, please create the conditional probability tables by hand. \hfill ($10\%$)
+
+```{r}
+# Conditional probability table for Credit Rating.
+buyComputer <- c('no', 'yes')
+fairCreditRating <-c(0.667, 0.417)
+excellentCreditRating <- c(0.333, 0.583)
+creditRatingCpt <- data.frame(
+  cbind(buyComputer, fairCreditRating, excellentCreditRating)
+)
+colnames(creditRatingCpt) <- c(
+  'Buy Computer',
+  'Credit Rating = Fair',
+  'Credit Rating = Excellent'
+)
+print.data.frame(creditRatingCpt, row.names=FALSE)
+writeLines('')
+
+# Conditional probability table for Income.
+lowIncome <- c(0.611, 0.583)
+highIncome <- c(0.389, 0.417)
+incomeCpt <- data.frame(cbind(buyComputer, lowIncome, highIncome))
+colnames(incomeCpt) <- c('Buy Computer', 'Income = Low', 'Income = High')
+print.data.frame(incomeCpt, row.names=FALSE)
+writeLines('')
+
+# Conditional probability table for Student.
+falseStudent <- c(0.333, 0.5)
+trueStudent <- c(0.667, 0.5)
+studentCpt <- data.frame(cbind(buyComputer, falseStudent, trueStudent))
+colnames(studentCpt) <- c('Buy Computer', 'Student = False', 'Student = True')
+print.data.frame(studentCpt, row.names=FALSE)
+writeLines('')
+
+# Conditional probability table for Buy Computer.
+noBuyComputer <- c(0.6)
+yesBuyComputer <- c(0.4)
+buyComputerCpt <- data.frame(cbind(noBuyComputer, yesBuyComputer))
+colnames(buyComputerCpt) <- c('Buy Computer = No', 'Buy Computer = Yes')
+print.data.frame(buyComputerCpt, row.names=FALSE)
+writeLines('')
+
+```
+
+From top to bottom, the code output shows the conditional probability tables for Credit Rating, Income, Student, and Buy Computer respectively, based on the conditional independence assumption where the predictors are assumed to be independent of each other. Only the table for Credit Rating has changed from question 3b as it is the only predictor dependent on other predictors.
 
 d)  Make predictions for 2 testing observations by using a naïve Bayes classifier. \hfill ($5\%$)
 
