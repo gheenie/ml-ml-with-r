@@ -73,6 +73,7 @@ iv. What is the predicted `acceleration` associated with an `cylinders` of 3.0? 
 # Prepare data.
 uniqueCylinders = sort(unique(Auto[, 'cylinders']), decreasing=FALSE)
 print(uniqueCylinders)
+writeLines('')
 
 # Predict on unique cylinder numbers.
 prediction <- predict(
@@ -80,6 +81,7 @@ prediction <- predict(
   newdata=data.frame(cylinders=uniqueCylinders)
 )
 print(prediction)
+writeLines('')
 
 confidenceInterval <- predict(
   modelLinearReg,
@@ -88,6 +90,7 @@ confidenceInterval <- predict(
   level=.99
 )
 print(confidenceInterval)
+writeLines('')
 
 predictionInterval <- predict(
   modelLinearReg,
@@ -96,6 +99,7 @@ predictionInterval <- predict(
   level=.99
 )
 print(predictionInterval)
+writeLines('')
 
 ```
 
@@ -167,6 +171,58 @@ legend(
 #### 3. Bayesian networks and naïve Bayes classifiers.\hfill ($30\%$)
 
 a)  Given a training dataset including 30 observations and a Bayesian network indicating the relationships between 3 features (i.e. Income, Student and Credit Rate) and the class attribute (i.e. Buy Computer), please create the conditional probability tables by hand. \hfill ($10\%$)
+
+```{r}
+bayesianTrainingData = read.table(
+  'question 3.txt',
+  header=TRUE,
+  sep=' '
+)
+
+income = c('low', 'low', 'low', 'low', 'high', 'high', 'high', 'high')
+student = c('false', 'false', 'true', 'true', 'false', 'false', 'true', 'true')
+buyComputer = c('no', 'yes', 'no', 'yes', 'no', 'yes', 'no', 'yes')
+fairCreditRating = c(0.667, 0.333, 0.75, 0.5, 0.333, 0.333, 0.75, 0.5)
+excellentCreditRating = c(0.333, 0.667, 0.25, 0.5, 0.667, 0.667, 0.25, 0.5)
+creditRatingCpt = data.frame(
+  cbind(income, student, buyComputer, fairCreditRating, excellentCreditRating)
+)
+colnames(creditRatingCpt) <- c(
+  'Income',
+  'Student',
+  'Buy Computer',
+  'Credit Rating = Fair',
+  'Credit Rating = Excellent'
+)
+print.data.frame(creditRatingCpt, row.names=FALSE)
+writeLines('')
+
+buyComputer <- c('no', 'yes')
+lowIncome <- c(0.611, 0.583)
+highIncome <- c(0.389, 0.417)
+incomeCpt <- data.frame(cbind(buyComputer, lowIncome, highIncome))
+colnames(incomeCpt) <- c('Buy Computer', 'Income = Low', 'Income = High')
+print.data.frame(incomeCpt, row.names=FALSE)
+writeLines('')
+
+buyComputer <- c('no', 'yes')
+falseStudent <- c(0.333, 0.5)
+trueStudent <- c(0.667, 0.5)
+studentCpt <- data.frame(cbind(buyComputer, falseStudent, trueStudent))
+colnames(studentCpt) <- c('Buy Computer', 'Student = False', 'Student = True')
+print.data.frame(studentCpt, row.names=FALSE)
+writeLines('')
+
+noBuyComputer <- c(0.6)
+yesBuyComputer <- c(0.4)
+buyComputerCpt <- data.frame(cbind(noBuyComputer, yesBuyComputer))
+colnames(buyComputerCpt) <- c('Buy Computer = No', 'Buy Computer = Yes')
+print.data.frame(buyComputerCpt, row.names=FALSE)
+writeLines('')
+
+```
+
+From top to bottom, the code output shows the conditional probability tables for Credit Rating, Income, Student, and Buy Computer respectively.
 
 b)  Make predictions for 2 testing observations by using a Bayesian network classifier. \hfill ($5\%$)
 
