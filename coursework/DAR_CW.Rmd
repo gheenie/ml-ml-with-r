@@ -34,9 +34,15 @@ For each of parts (a) through (d), indicate whether we would generally expect th
 
 (a) The number of predictors $p$ is large, and the number of observations $n$ is small. ($2\%$)
 
+We would generally expect a non-parametric method to perform worse than a parametric method, although it will be a close call. Parametric methods are more suited to small numbers of observations as they try to fit an assumed functional form, which makes it simpler, more explainable, and require less data. Non-parametric methods are more suited to higher numbers of predictors as they are more flexible, allowing them to fit more functional forms, but require more observations to prevent overfitting precisely because they are more powerful. In this case, overfitting from a non-parametric method will likely be a bigger problem than a parametric method not being able to match the actual underlying function. A simple model may still provide a reasonably accurate prediction.
+
 (b) The sample size $n$ is large, and the number of predictors $p$ is also large. ($2\%$)
 
+We would generally expect a non-parametric method to perform better than a parametric method. With a large number of predictors, the underlying function can take many more forms. Parametric methods tend to assume a functional form, so they are constrained to this assumed form, making them a poorer fit for the myriad possible underlying forms. Non-parametric methods are more flexible, where they can fit more functional forms, making them more suitable for larger numbers of predictors. With a large sample size, there is less risk of overfitting, and there will be more sufficient data to provide enough information for all of the predictors.
+
 (c) The sample size $n$ is small, and the relationship between the predictors and response is highly linear. ($3\%$)
+
+We would generally expect a non-parametric method to perform worse than a parametric method. The sample size is small, so a non-parametric method will likely overfit. Even if the sample size was sufficiently large, the model may be overly complex for a relatively simple linear relationship, which results in overfitting again, plus it will be more difficult to interpret. Since we know beforehand that there is an existing relationship between the predictors and response, a parametric method can assume a functional form that is similar to this relationship, which simplifies the problem of estimating the underlying functional form to estimating a set of parameters, making it easier to compute and understand, and likely achieves a good fit. The sample size requirements will also not be as big as a non-parametric method.
 
 (d) The standard deviation of the error terms, i.e. $\sigma = \textrm{sd}(\varepsilon)$, is extremely high. ($3\%$)
 
