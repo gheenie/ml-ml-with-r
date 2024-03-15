@@ -1,3 +1,8 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+---
 ```{r}
 # renv::install('rmarkdown')
 # renv::install('knitr')
@@ -45,6 +50,8 @@ We would generally expect a non-parametric method to perform better than a param
 We would generally expect a non-parametric method to perform worse than a parametric method. The sample size is small, so a non-parametric method will likely overfit. Even if the sample size was sufficiently large, the model may be overly complex for a relatively simple linear relationship, which results in overfitting again, plus it will be more difficult to interpret. Since we know beforehand that there is an existing relationship between the predictors and response, a parametric method can assume a functional form that is similar to this relationship, which simplifies the problem of estimating the underlying functional form to estimating a set of parameters, making it easier to compute and understand, and likely achieves a good fit. The sample size requirements will also not be as big as a non-parametric method.
 
 (d) The standard deviation of the error terms, i.e. $\sigma = \textrm{sd}(\varepsilon)$, is extremely high. ($3\%$)
+
+We would generally expect a non-parametric method to perform better than a parametric method. Because of the error term, our parametric model will never perfectly predict the response. If the standard deviation of the error term is low, the error term almost becomes a constant and just another parameter of a consistent population model. But when the error term has a high standard deviation, it means that on average the predicted response will be off by that high amount even if the model is 'correct'. If the standard deviation is extremely high, and on average the predicted response will be very off, then perhaps the assumed functional form of the parametric method is simply not a good fit. The underlying functional form is probably more complex than we thought, or the distribution of the data do not follow the assumptions of a parametric method, so a flexible non-parametric method will work better.
 
 #### 2. Linear regression \hfill ($20\%$)\newline\newline
 
