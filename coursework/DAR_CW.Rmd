@@ -6,6 +6,8 @@ output:
 ```{r}
 # renv::install('rmarkdown')
 # renv::install('knitr')
+# renv::install('tinytex')
+# tinytex::install_tinytex()
 # renv::install('ISLR')
 # renv::install('aod')
 # renv::install('ROCR')
@@ -86,7 +88,6 @@ iv. What is the predicted `acceleration` associated with an `cylinders` of 3.0? 
 # Prepare data.
 uniqueCylinders = sort(unique(Auto[, 'cylinders']), decreasing=FALSE)
 print(uniqueCylinders)
-writeLines('')
 
 # Predict on unique cylinder numbers.
 prediction <- predict(
@@ -94,7 +95,6 @@ prediction <- predict(
   newdata=data.frame(cylinders=uniqueCylinders)
 )
 print(prediction)
-writeLines('')
 
 confidenceInterval <- predict(
   modelLinearReg,
@@ -103,7 +103,6 @@ confidenceInterval <- predict(
   level=.99
 )
 print(confidenceInterval)
-writeLines('')
 
 predictionInterval <- predict(
   modelLinearReg,
@@ -112,11 +111,10 @@ predictionInterval <- predict(
   level=.99
 )
 print(predictionInterval)
-writeLines('')
 
 ```
 
-For 3.0 cylinders, the predicted acceleration is 17.55906, the confidence interval is 17.00962 - 18.10849, and the prediction interval is 11.361636 - 23.75648. The confidence and prediction intervals for the rest of the cylinders are shown above, with the row numbers corresponding to the row numbers in uniqueCylinders representing the number of cylinders.
+For 3.0 cylinders, the predicted acceleration is 17.55906, the confidence interval is 17.00962 - 18.10849, and the prediction interval is 11.361636 - 23.75648. The confidence and prediction intervals for the rest of the cylinders are shown above, with the row numbers corresponding to the row numbers in the uniqueCylinders vector representing the number of cylinders.
 
 <!-- -->
 
@@ -127,9 +125,9 @@ For 3.0 cylinders, the predicted acceleration is 17.55906, the confidence interv
 plot(
   acceleration ~ cylinders,
   Auto,
-  xlab='acceleration',
-  ylab='damage',
-  main='Plot of damage against distance'
+  xlab='cylinders',
+  ylab='acceleration',
+  main='Acceleration against distance'
 )
 # Then plot the least squares line.
 abline(modelLinearReg)
@@ -143,9 +141,9 @@ abline(modelLinearReg)
 plot(
   acceleration ~ cylinders,
   Auto,
-  xlab='acceleration',
-  ylab='damage',
-  main='Plot of damage against distance',
+  xlab='cylinders',
+  ylab='acceleration',
+  main='Acceleration against cylinders',
   ylim=c(7, 25)
 )
 abline(modelLinearReg)
@@ -214,7 +212,6 @@ colnames(creditRatingCpt) <- c(
   'Credit Rating = Excellent'
 )
 print.data.frame(creditRatingCpt, row.names=FALSE)
-writeLines('')
 
 # Conditional probability table for Income.
 buyComputer <- c('no', 'yes')
@@ -223,7 +220,6 @@ highIncome <- c(0.389, 0.417)
 incomeCpt <- data.frame(cbind(buyComputer, lowIncome, highIncome))
 colnames(incomeCpt) <- c('Buy Computer', 'Income = Low', 'Income = High')
 print.data.frame(incomeCpt, row.names=FALSE)
-writeLines('')
 
 # Conditional probability table for Student.
 falseStudent <- c(0.333, 0.5)
@@ -231,7 +227,6 @@ trueStudent <- c(0.667, 0.5)
 studentCpt <- data.frame(cbind(buyComputer, falseStudent, trueStudent))
 colnames(studentCpt) <- c('Buy Computer', 'Student = False', 'Student = True')
 print.data.frame(studentCpt, row.names=FALSE)
-writeLines('')
 
 # Conditional probability table for Buy Computer.
 noBuyComputer <- c(0.6)
@@ -239,7 +234,6 @@ yesBuyComputer <- c(0.4)
 buyComputerCpt <- data.frame(cbind(noBuyComputer, yesBuyComputer))
 colnames(buyComputerCpt) <- c('Buy Computer = No', 'Buy Computer = Yes')
 print.data.frame(buyComputerCpt, row.names=FALSE)
-writeLines('')
 
 ```
 
@@ -249,44 +243,44 @@ b)  Make predictions for 2 testing observations by using a Bayesian network clas
 
 For observation 31:
 
-P(Buy Computer=No | Income=Low, Student=True, Credit Rating=Excellent)
-is proportional to P(Income=Low, Student=True, Credit Rating=Excellent, Buy Computer=No)
-= P(Income=Low | Buy Computer=No)
-* P(Student=True | Buy Computer=No)
-* P(Credit Rating=Excellent | Income=Low, Student=True, Buy Computer=No)
-* P(Buy Computer=No)
-= 0.611 * 0.667 * 0.25 * 0.6
+P(Buy Computer=No | Income=Low, Student=True, Credit Rating=Excellent)\
+is proportional to P(Income=Low, Student=True, Credit Rating=Excellent, Buy Computer=No)\
+= P(Income=Low | Buy Computer=No)\
+* P(Student=True | Buy Computer=No)\
+* P(Credit Rating=Excellent | Income=Low, Student=True, Buy Computer=No)\
+* P(Buy Computer=No)\
+= 0.611 * 0.667 * 0.25 * 0.6\
 = 0.06113055
 
-P(Buy Computer=Yes | Income=Low, Student=True, Credit Rating=Excellent)
-is proportional to P(Income=Low, Student=True, Credit Rating=Excellent, Buy Computer=Yes)
-= P(Income=Low | Buy Computer=Yes)
-* P(Student=True | Buy Computer=Yes)
-* P(Credit Rating=Excellent | Income=Low, Student=True, Buy Computer=Yes)
-* P(Buy Computer=Yes)
-= 0.583 * 0.5 * 0.5 * 0.4
+P(Buy Computer=Yes | Income=Low, Student=True, Credit Rating=Excellent)\
+is proportional to P(Income=Low, Student=True, Credit Rating=Excellent, Buy Computer=Yes)\
+= P(Income=Low | Buy Computer=Yes)\
+* P(Student=True | Buy Computer=Yes)\
+* P(Credit Rating=Excellent | Income=Low, Student=True, Buy Computer=Yes)\
+* P(Buy Computer=Yes)\
+= 0.583 * 0.5 * 0.5 * 0.4\
 = 0.0583
 
 Hence, the prediction for observation 31 is No, because P(Buy Computer=No | Income=Low, Student=True, Credit Rating=Excellent) is greater than P(Buy Computer=Yes | Income=Low, Student=True, Credit Rating=Excellent).
 
 For observation 32:
 
-P(Buy Computer=No | Income=High, Student=True, Credit Rating=Fair)
-is proportional to P(Income=High, Student=True, Credit Rating=Fair, Buy Computer=No)
-= P(Income=High | Buy Computer=No)
-* P(Student=True | Buy Computer=No)
-* P(Credit Rating=Fair | Income=High, Student=True, Buy Computer=No)
-* P(Buy Computer=No)
-= 0.389 * 0.667 * 0.75 * 0.6
+P(Buy Computer=No | Income=High, Student=True, Credit Rating=Fair)\
+is proportional to P(Income=High, Student=True, Credit Rating=Fair, Buy Computer=No)\
+= P(Income=High | Buy Computer=No)\
+* P(Student=True | Buy Computer=No)\
+* P(Credit Rating=Fair | Income=High, Student=True, Buy Computer=No)\
+* P(Buy Computer=No)\
+= 0.389 * 0.667 * 0.75 * 0.6\
 = 0.11675835
 
-P(Buy Computer=Yes | Income=High, Student=True, Credit Rating=Fair)
-is proportional to P(Income=High, Student=True, Credit Rating=Fair, Buy Computer=Yes)
-= P(Income=High | Buy Computer=Yes)
-* P(Student=True | Buy Computer=Yes)
-* P(Credit Rating=Fair | Income=High, Student=True, Buy Computer=Yes)
-* P(Buy Computer=Yes)
-= 0.417 * 0.5 * 0.5 * 0.4
+P(Buy Computer=Yes | Income=High, Student=True, Credit Rating=Fair)\
+is proportional to P(Income=High, Student=True, Credit Rating=Fair, Buy Computer=Yes)\
+= P(Income=High | Buy Computer=Yes)\
+* P(Student=True | Buy Computer=Yes)\
+* P(Credit Rating=Fair | Income=High, Student=True, Buy Computer=Yes)\
+* P(Buy Computer=Yes)\
+= 0.417 * 0.5 * 0.5 * 0.4\
 = 0.0417
 
 Hence, the prediction for observation 32 is No, because P(Buy Computer=No | Income=High, Student=True, Credit Rating=Fair) is greater than P(Buy Computer=Yes | Income=High, Student=True, Credit Rating=Fair).
@@ -307,7 +301,6 @@ colnames(creditRatingCpt) <- c(
   'Credit Rating = Excellent'
 )
 print.data.frame(creditRatingCpt, row.names=FALSE)
-writeLines('')
 
 # Conditional probability table for Income.
 lowIncome <- c(0.611, 0.583)
@@ -315,7 +308,6 @@ highIncome <- c(0.389, 0.417)
 incomeCpt <- data.frame(cbind(buyComputer, lowIncome, highIncome))
 colnames(incomeCpt) <- c('Buy Computer', 'Income = Low', 'Income = High')
 print.data.frame(incomeCpt, row.names=FALSE)
-writeLines('')
 
 # Conditional probability table for Student.
 falseStudent <- c(0.333, 0.5)
@@ -323,7 +315,6 @@ trueStudent <- c(0.667, 0.5)
 studentCpt <- data.frame(cbind(buyComputer, falseStudent, trueStudent))
 colnames(studentCpt) <- c('Buy Computer', 'Student = False', 'Student = True')
 print.data.frame(studentCpt, row.names=FALSE)
-writeLines('')
 
 # Conditional probability table for Buy Computer.
 noBuyComputer <- c(0.6)
@@ -331,7 +322,6 @@ yesBuyComputer <- c(0.4)
 buyComputerCpt <- data.frame(cbind(noBuyComputer, yesBuyComputer))
 colnames(buyComputerCpt) <- c('Buy Computer = No', 'Buy Computer = Yes')
 print.data.frame(buyComputerCpt, row.names=FALSE)
-writeLines('')
 
 ```
 
@@ -341,44 +331,44 @@ d)  Make predictions for 2 testing observations by using a naïve Bayes classifi
 
 For observation 31:
 
-P(Buy Computer=No | Income=Low, Student=True, Credit Rating=Excellent)
-is proportional to P(Income=Low, Student=True, Credit Rating=Excellent, Buy Computer=No)
-= P(Income=Low | Buy Computer=No)
-* P(Student=True | Buy Computer=No)
-* P(Credit Rating=Excellent | Buy Computer=No)
-* P(Buy Computer=No)
-= 0.611 * 0.667 * 0.333 * 0.6
+P(Buy Computer=No | Income=Low, Student=True, Credit Rating=Excellent)\
+is proportional to P(Income=Low, Student=True, Credit Rating=Excellent, Buy Computer=No)\
+= P(Income=Low | Buy Computer=No)\
+* P(Student=True | Buy Computer=No)\
+* P(Credit Rating=Excellent | Buy Computer=No)\
+* P(Buy Computer=No)\
+= 0.611 * 0.667 * 0.333 * 0.6\
 = 0.0814258926
 
-P(Buy Computer=Yes | Income=Low, Student=True, Credit Rating=Excellent)
-is proportional to P(Income=Low, Student=True, Credit Rating=Excellent, Buy Computer=Yes)
-= P(Income=Low | Buy Computer=Yes)
-* P(Student=True | Buy Computer=Yes)
-* P(Credit Rating=Excellent | Buy Computer=Yes)
-* P(Buy Computer=Yes)
-= 0.583 * 0.5 * 0.583 * 0.4
+P(Buy Computer=Yes | Income=Low, Student=True, Credit Rating=Excellent)\
+is proportional to P(Income=Low, Student=True, Credit Rating=Excellent, Buy Computer=Yes)\
+= P(Income=Low | Buy Computer=Yes)\
+* P(Student=True | Buy Computer=Yes)\
+* P(Credit Rating=Excellent | Buy Computer=Yes)\
+* P(Buy Computer=Yes)\
+= 0.583 * 0.5 * 0.583 * 0.4\
 = 0.0679778
 
 Hence, the prediction for observation 31 is No, because P(Buy Computer=No | Income=Low, Student=True, Credit Rating=Excellent) is greater than P(Buy Computer=Yes | Income=Low, Student=True, Credit Rating=Excellent).
 
 For observation 32:
 
-P(Buy Computer=No | Income=High, Student=True, Credit Rating=Fair)
-is proportional to P(Income=High, Student=True, Credit Rating=Fair, Buy Computer=No)
-= P(Income=High | Buy Computer=No)
-* P(Student=True | Buy Computer=No)
-* P(Credit Rating=Fair | Buy Computer=No)
-* P(Buy Computer=No)
-= 0.389 * 0.667 * 0.667 * 0.6
+P(Buy Computer=No | Income=High, Student=True, Credit Rating=Fair)\
+is proportional to P(Income=High, Student=True, Credit Rating=Fair, Buy Computer=No)\
+= P(Income=High | Buy Computer=No)\
+* P(Student=True | Buy Computer=No)\
+* P(Credit Rating=Fair | Buy Computer=No)\
+* P(Buy Computer=No)\
+= 0.389 * 0.667 * 0.667 * 0.6\
 = 0.1038370926
 
-P(Buy Computer=Yes | Income=High, Student=True, Credit Rating=Fair)
-is proportional to P(Income=High, Student=True, Credit Rating=Fair, Buy Computer=Yes)
-= P(Income=High | Buy Computer=Yes)
-* P(Student=True | Buy Computer=Yes)
-* P(Credit Rating=Fair | Buy Computer=Yes)
-* P(Buy Computer=Yes)
-= 0.417 * 0.5 * 0.417 * 0.4
+P(Buy Computer=Yes | Income=High, Student=True, Credit Rating=Fair)\
+is proportional to P(Income=High, Student=True, Credit Rating=Fair, Buy Computer=Yes)\
+= P(Income=High | Buy Computer=Yes)\
+* P(Student=True | Buy Computer=Yes)\
+* P(Credit Rating=Fair | Buy Computer=Yes)\
+* P(Buy Computer=Yes)\
+= 0.417 * 0.5 * 0.417 * 0.4\
 = 0.0347778
 
 Hence, the prediction for observation 32 is No, because P(Buy Computer=No | Income=High, Student=True, Credit Rating=Fair) is greater than P(Buy Computer=Yes | Income=High, Student=True, Credit Rating=Fair).
@@ -507,6 +497,7 @@ e)  Train a logistic regression model. Then use the testing dataset to conduct a
 modelLogisticReg <- glm(quality ~ ., data=dataTrain, family='binomial')
 # Obtain predictions in the form of probabilities.
 probabilities <- predict(modelLogisticReg, newdata=dataTest, type='response')
+# Convert probabilities to performance metrics.
 predictions <- prediction(probabilities, dataTest$quality)
 tprfpr <- performance(predictions, measure='tpr', x.measure='fpr')
 plot(tprfpr)
@@ -518,7 +509,7 @@ print(mean(classPredictions == dataTest$quality))
 
 ```
 
-The classification accuracy of the logistic regression model is 73.75%. This is the highest, followed by the linear kernel SVM classifier (68.25%/69.75%), then the RBF kernel SVM classifier (64%). However, many factors can affect the evaluated performance. A more extreme threshold selected from the ROC curve may produce a better classification accuracy for this specific test dataset but may not generalise better to new test datasets. The three models were trained with all the possible predictors, but changing the selected predictors may result in better performances for each model. For the logistic regression model, dropping predictors whose p-values do not meet our desired thresholds may improve performance, as well as looking at pairwise correlations between the predictors.
+The classification accuracy of the logistic regression model is 73.75%. This is the highest, followed by the linear kernel SVM classifier (68.25%/69.75%), then the RBF kernel SVM classifier (64%/48.75%). However, many factors can affect the evaluated performance. A more extreme threshold selected from the ROC curve may produce a better classification accuracy for this specific test dataset but may not generalise better to new test datasets. The three models were trained with all the possible predictors, but changing the selected predictors may result in better performances for each model. For the logistic regression model, dropping predictors whose p-values do not meet our desired thresholds may improve performance, as well as looking at pairwise correlations between the predictors.
 
 ```{r}
 summary(modelLogisticReg)
@@ -566,4 +557,4 @@ mean(pred == dataTest[, 12])
 
 ```
 
-After removing some predictors for the logistic regression model, the classification accuracy was slightly improved, and another benefit is that the model is more explainable. The same result was observed for the linear and RBF kernel SVM classifiers with scaling, with a bigger performance improvement for the RBF kernel SVM classifier. 
+After removing some predictors for the logistic regression model, the classification accuracy was slightly improved (74.25% vs 73.75%), and another benefit is that the model is more explainable. The same result was observed for the linear (68.5% vs 68.25%) and RBF kernel (67.25% vs 64%) SVM classifiers with scaling, with a bigger performance improvement for the RBF kernel SVM classifier.
