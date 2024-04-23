@@ -671,3 +671,62 @@ tunedSvm <- tune(
 print(summary(tunedSvm))
 pred <- predict(tunedSvm$best.model, newdata=xTest)
 print(mean(pred != yTest))
+
+# Functions for k-means clustering.
+
+library(datasets)
+data <- attitude[, c(3,4)]
+plot(
+  data,
+  main='% of favourable responses to Learning and Privilege',
+  pch=20,
+  cex=2
+)
+set.seed(7)
+kmeansNstart1 <- kmeans(data, 2, nstart=1)
+print(kmeansNstart1$tot.withinss)
+plot(
+  data,
+  col=(kmeansNstart1$cluster + 1),
+  main='K-means nstart 1 results with 2 clusters',
+  pch=20,
+  cex=2
+)
+set.seed(7)
+kmeansNstart100 <- kmeans(data, 2, nstart=100)
+print(kmeansNstart100$tot.withinss)
+plot(
+  data,
+  col=(kmeansNstart100$cluster + 1),
+  main='K-means nstart 100 results with 2 clusters',
+  pch=20,
+  cex=2
+)
+totWithinSSes <- rep(0, 15)
+for (i in 1:15) {
+  set.seed(70)
+  totWithinSSes[i] <- kmeans(data, i, nstart=100)$tot.withinss
+}
+plot(
+  1:15,
+  totWithinSSes,
+  type='b',
+  pch=20,
+  cex=2,
+  xlab='Number of Clusters',
+  ylab='Within group sums of sqaures',
+  main='Assessing the Optimal Number of Clusters with the Elbow Method'
+)
+set.seed(70)
+kmeansK6 <- kmeans(data, 6, nstart=100)
+plot(
+  data,
+  col=(kmeansK6$cluster + 1),
+  main='K-means k 6 results with 6 clusters',
+  pch=20,
+  cex=2
+)
+
+# Functions for PCA.
+
+
