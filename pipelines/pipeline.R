@@ -729,4 +729,39 @@ plot(
 
 # Functions for PCA.
 
+print(row.names(USArrests))
+print(names(USArrests))
+print(apply(USArrests, 2, mean))
+print(apply(USArrests, 2, var))
 
+# Modelling.
+pcaModel <- prcomp(USArrests, scale=TRUE)
+
+# Plotting the model.
+biplot(pcaModel, scale=TRUE)
+
+print(names(pcaModel))
+print(pcaModel$center)
+print(pcaModel$scale)
+print(pcaModel$rotation)
+# Some evaluation.
+print(pcaModel$sdev)
+varianceExplained <- pcaModel$sdev^2
+print(varianceExplained)
+percentVarianceExplained <- varianceExplained / sum(varianceExplained)
+print(percentVarianceExplained)
+# Scree plot.
+plot(
+  percentVarianceExplained,
+  xlab='Principal Component',
+  ylab='Proportion of Variance Explained',
+  ylim=c(0, 1),
+  type='b'
+)
+plot(
+  cumsum(percentVarianceExplained),
+  xlab='Principal Component',
+  ylab='Proportion of Variance Explained',
+  ylim=c(0, 1),
+  type='b'
+)
